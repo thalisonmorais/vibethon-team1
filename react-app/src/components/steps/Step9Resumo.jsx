@@ -33,7 +33,7 @@ export default function Step9Resumo({ onRestart }) {
         ))}
       </div>
 
-      <div className="card" style={{ marginTop: 24 }}>
+      {/* <div className="card" style={{ marginTop: 24 }}>
         <div className="card-title">🗺️ Roadmap</div>
         <div className="timeline">
           {roadmap.map(r => (
@@ -43,7 +43,7 @@ export default function Step9Resumo({ onRestart }) {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <div className="card" style={{ marginTop: 24, textAlign: 'center', background: 'linear-gradient(135deg, var(--purple-light), white)' }}>
         <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>CominAI 🤖</div>
