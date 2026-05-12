@@ -150,9 +150,9 @@ A saída é um JSON estruturado pronto para alimentar o próximo nó do n8n.
 
 ## 👥 Time
 
-- **Beatriz Gomes** — Diretora de Operações (ex-recrutadora, conhece a dor)
-- **Thalison Morais** — Desenvolvedor Pleno
-- **Nathalia Lusquinos** — Analista de Negócios
+- **Beatriz Gomes**
+- **Thalison Morais**
+- **Nathalia Lusquinos**
 
 Com input direto de **Brendo (recrutador Design)** e **Cominato (recrutatdor Tech)**.
 
