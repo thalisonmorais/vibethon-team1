@@ -1,0 +1,47 @@
+VAGA: Engenheiro(a) de Dados Pleno — R2 Ventures
+
+LOCAL: São Paulo (Híbrido — 3x semana no escritório da Vila Olímpia)
+SENIORIDADE: Pleno (3 a 5 anos de experiência)
+TIME: Plataforma de Dados — squad de produtos AdTech (AquiAds / Eletromídia)
+
+SOBRE A R2 VENTURES
+Somos um grupo de empresas que combina capital, tecnologia e operação para acelerar
+negócios em mídia, ad-tech e serviços financeiros. Nossa plataforma de dados processa
+bilhões de eventos por mês de campanhas de mídia OOH e digital.
+
+O QUE VOCÊ VAI FAZER
+- Construir e manter pipelines de dados em batch e streaming (Databricks, Spark, Airflow)
+- Modelar dados em camadas Bronze/Silver/Gold dentro do Unity Catalog
+- Trabalhar lado a lado com analistas de produto, BI e ciência de dados
+- Apoiar a evolução do nosso data lake (Delta Lake) e dos dashboards no Preset/Superset
+- Garantir qualidade, lineage, custo e SLA das pipelines
+
+REQUISITOS OBRIGATÓRIOS
+- 3+ anos de experiência com engenharia de dados em produção
+- Python avançado (Pandas, PySpark) e SQL avançado
+- Experiência prática com Databricks ou outra stack Spark gerenciada
+- Conhecimento de modelagem dimensional (star/snowflake) e medallion architecture
+- Familiaridade com Git, code review e ambientes Linux
+
+DESEJÁVEIS
+- Delta Lake / Iceberg
+- Apache Airflow ou Dagster
+- dbt
+- Experiência com dados de mídia (impressões, GRP, audiência)
+- Inglês para leitura de documentação
+
+SOFT SKILLS
+- Comunicação clara com áreas de negócio
+- Vontade de aprender e dividir conhecimento
+- Pragmatismo (a gente entrega — não brinca de framework)
+
+BENEFÍCIOS
+Plano de saúde Sulamérica, VR de R$1.200, vale mobilidade, day off no aniversário,
+bônus anual por performance, equity para times-chave.
+
+PROCESSO SELETIVO
+1. Triagem (CominAI 😉)
+2. Ligação rápida com recrutadora
+3. Prova técnica em Coderbyte (SQL + PySpark, 90min)
+4. Entrevista técnica com dupla (eng pleno/sênior + tech lead)
+5. Conversa final com diretoria

@@ -1,0 +1,473 @@
+{
+  "name": "CominAI — Triagem + Envio de prova",
+  "description": "Disparado por candidate.created no Quickin. Roda Agente 1 (triagem). Score >= 70 (nota de corte configurável): envia prova (Coderbyte/Tech, case via Quickin/Design, Fábrica/Business) + notifica Slack. Score < 70: e-mail talent pool automático.",
+  "nodes": [
+    {
+      "id": "n1",
+      "name": "Webhook Quickin — Nova Candidatura",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quickin-nova-candidatura",
+        "responseMode": "responseNode"
+      }
+    },
+    {
+      "id": "n2",
+      "name": "Baixa CV",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        420,
+        220
+      ],
+      "parameters": {
+        "url": "={{ $json.cv_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "n3",
+      "name": "Busca vaga no Quickin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        420,
+        380
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.quickin.com.br/v1/vagas/{{ $('Webhook Quickin — Nova Candidatura').item.json.vaga_id }}"
+      }
+    },
+    {
+      "id": "n4",
+      "name": "🧠 Agente 1 — Triagem",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "parameters": {
+        "command": "=cd /opt/cominato-copilot/agents/agent_1_triage && python main.py --vaga /tmp/vaga.txt --cv /tmp/cv.pdf --linkedin '{{ $('Webhook Quickin — Nova Candidatura').item.json.linkedin_url }}'"
+      }
+    },
+    {
+      "id": "n5",
+      "name": "Atualiza candidato no Quickin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.quickin.com.br/v1/candidatos/{{ $('Webhook Quickin — Nova Candidatura').item.json.candidato_id }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "score_triagem",
+              "value": "={{ $json.score }}"
+            },
+            {
+              "name": "recomendacao",
+              "value": "={{ $json.recomendacao }}"
+            },
+            {
+              "name": "etapa",
+              "value": "=triagem_concluida"
+            },
+            {
+              "name": "notas_internas",
+              "value": "={{ JSON.stringify($json) }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n6",
+      "name": "Se: score >= 70",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.score }}",
+              "operation": "largerEqual",
+              "value2": 70
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n7",
+      "name": "Switch — Tipo de prova",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1380,
+        220
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $('Webhook Quickin — Nova Candidatura').item.json.area }}",
+                    "operation": "equals",
+                    "value2": "tech"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $('Webhook Quickin — Nova Candidatura').item.json.area }}",
+                    "operation": "equals",
+                    "value2": "design"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $('Webhook Quickin — Nova Candidatura').item.json.area }}",
+                    "operation": "equals",
+                    "value2": "business"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n8",
+      "name": "Coderbyte — Envia convite (Tech)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1620,
+        120
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.coderbyte.com/v1/assessments/invitations",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "candidate_email",
+              "value": "={{ $('Webhook Quickin — Nova Candidatura').item.json.email }}"
+            },
+            {
+              "name": "assessment_id",
+              "value": "={{ $('Busca vaga no Quickin').item.json.coderbyte_assessment_id }}"
+            },
+            {
+              "name": "webhook_url",
+              "value": "https://n8n.r2.com.br/webhook/coderbyte-nota"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n9",
+      "name": "Quickin — Envia case PDF (Design)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1620,
+        220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.quickin.com.br/v1/candidatos/{{ $('Webhook Quickin — Nova Candidatura').item.json.candidato_id }}/email",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "case_design_pdf"
+            },
+            {
+              "name": "anexo_url",
+              "value": "={{ $('Busca vaga no Quickin').item.json.case_design_pdf_url }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n10",
+      "name": "Fábrica de Provas (Business)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1620,
+        320
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.fabricadeprovas.com.br/v1/convites",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $('Webhook Quickin — Nova Candidatura').item.json.email }}"
+            },
+            {
+              "name": "prova_id",
+              "value": "={{ $('Busca vaga no Quickin').item.json.fabrica_prova_id }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n11",
+      "name": "Notifica Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1860,
+        220
+      ],
+      "parameters": {
+        "channel": "#recrutamento",
+        "text": "=:rocket: *Candidato avançou para a prova automaticamente*\n*Vaga:* {{ $('Busca vaga no Quickin').item.json.titulo }}\n*Candidato:* {{ $('Webhook Quickin — Nova Candidatura').item.json.nome }}\n*Score:* {{ $('🧠 Agente 1 — Triagem').item.json.score }}/100\n*Resumo:* {{ $('🧠 Agente 1 — Triagem').item.json.resumo }}\n*Pontos a investigar na entrevista:*\n• {{ $('🧠 Agente 1 — Triagem').item.json.pontos_a_investigar_na_entrevista.join('\\n• ') }}"
+      }
+    },
+    {
+      "id": "n12",
+      "name": "E-mail Talent Pool",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1380,
+        420
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.quickin.com.br/v1/candidatos/{{ $('Webhook Quickin — Nova Candidatura').item.json.candidato_id }}/email",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "talent_pool_feedback"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n13",
+      "name": "Responde Quickin (200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\"}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Quickin — Nova Candidatura": {
+      "main": [
+        [
+          {
+            "node": "Baixa CV",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca vaga no Quickin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixa CV": {
+      "main": [
+        [
+          {
+            "node": "🧠 Agente 1 — Triagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca vaga no Quickin": {
+      "main": [
+        [
+          {
+            "node": "🧠 Agente 1 — Triagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 Agente 1 — Triagem": {
+      "main": [
+        [
+          {
+            "node": "Atualiza candidato no Quickin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza candidato no Quickin": {
+      "main": [
+        [
+          {
+            "node": "Se: score >= 70",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se: score >= 70": {
+      "main": [
+        [
+          {
+            "node": "Switch — Tipo de prova",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E-mail Talent Pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch — Tipo de prova": {
+      "main": [
+        [
+          {
+            "node": "Coderbyte — Envia convite (Tech)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Quickin — Envia case PDF (Design)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fábrica de Provas (Business)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coderbyte — Envia convite (Tech)": {
+      "main": [
+        [
+          {
+            "node": "Notifica Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quickin — Envia case PDF (Design)": {
+      "main": [
+        [
+          {
+            "node": "Notifica Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fábrica de Provas (Business)": {
+      "main": [
+        [
+          {
+            "node": "Notifica Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notifica Slack": {
+      "main": [
+        [
+          {
+            "node": "Responde Quickin (200)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E-mail Talent Pool": {
+      "main": [
+        [
+          {
+            "node": "Responde Quickin (200)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cominato-copilot-v0.2"
+}

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CominAI — Agente 2 · Agendamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ================================================================
+   R2 VENTURES — DESIGN TOKENS
+   ================================================================ */
+    :root {
+      --r2-azul: #0E2847;
+      --r2-vermelho: #E63548;
+      --r2-branco: #FFFFFF;
+
+      --azul-50: #F2F4F7;
+      --azul-100: #D6DCE4;
+      --azul-200: #A8B3C2;
+      --azul-300: #7A8AA0;
+      --azul-400: #4C617E;
+      --azul-500: #0E2847;
+      --azul-600: #0B2039;
+      --azul-700: #08182B;
+
+      --vermelho-50: #FCEBEE;
+      --vermelho-100: #F7C7CD;
+      --vermelho-200: #F1949E;
+      --vermelho-300: #EC6171;
+      --vermelho-500: #E63548;
+      --vermelho-texto: #C42636;
+      --vermelho-600: #C42636;
+
+      --neutro-50: #FAFAFA;
+      --neutro-100: #F4F4F5;
+      --neutro-200: #E4E4E7;
+      --neutro-300: #D4D4D8;
+      --neutro-400: #A1A1AA;
+      --neutro-500: #71717A;
+      --neutro-600: #52525B;
+      --neutro-700: #3F3F46;
+      --neutro-800: #27272A;
+
+      --bg: #FAFAFA;
+      --bg-elev: #FFFFFF;
+      --bg-section: #F4F4F5;
+      --texto: #0E2847;
+      --texto-mute: #5A6B82;
+      --texto-faint: #94A3B5;
+      --borda: #E4E8ED;
+      --borda-forte: #C9D0DA;
+
+      --font-display: 'Kumbh Sans', system-ui, sans-serif;
+      --font-tech: 'Rajdhani', system-ui, sans-serif;
+
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+      --sp-7: 40px;
+      --sp-8: 48px;
+
+      --r-sm: 4px;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-xl: 16px;
+      --r-full: 9999px;
+
+      --shadow-xs: 0 1px 2px rgba(14, 40, 71, 0.06);
+      --shadow-sm: 0 2px 4px rgba(14, 40, 71, 0.08), 0 1px 2px rgba(14, 40, 71, 0.06);
+      --shadow-md: 0 8px 16px rgba(14, 40, 71, 0.10), 0 2px 4px rgba(14, 40, 71, 0.06);
+    }
+
+    /* ================================================================
+   RESET + BASE
+   ================================================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--texto);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ================================================================
+   LAYOUT
+   ================================================================ */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 var(--sp-5);
+      width: 100%;
+    }
+
+    /* ================================================================
+   HEADER
+   ================================================================ */
+    .header {
+      background: var(--azul-500);
+      border-bottom: 3px solid var(--vermelho-500);
+      padding: var(--sp-4) 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--vermelho-500);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--r2-branco);
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-family: var(--font-tech);
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.06em;
+      margin-top: 1px;
+    }
+
+    .agent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      background: rgba(230, 53, 72, 0.15);
+      border: 1px solid rgba(230, 53, 72, 0.35);
+      border-radius: var(--r-full);
+      font-family: var(--font-tech);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--vermelho-300);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--vermelho-500);
+      border-radius: 50%;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.45;
+        transform: scale(1.35);
+      }
+    }
+
+    /* ================================================================
+   MAIN CONTENT
+   ================================================================ */
+    .main {
+      flex: 1;
+      padding: var(--sp-6) 0 var(--sp-8);
+    }
+
+    /* ================================================================
+   DISPATCH BANNER
+   ================================================================ */
+    .dispatch-banner {
+      background: var(--bg-elev);
+      border: 1px solid var(--borda);
+      border-left: 4px solid var(--vermelho-500);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4) var(--sp-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-5);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .dispatch-left {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .dispatch-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    .dispatch-text {
+      font-size: 14px;
+      color: var(--texto-mute);
+    }
+
+    .dispatch-text strong {
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .integrations {
+      display: flex;
+      gap: var(--sp-2);
+      flex-wrap: wrap;
+    }
+
+    .int-chip {
+      padding: 4px 10px;
+      background: var(--azul-50);
+      border: 1px solid var(--borda);
+      border-radius: var(--r-sm);
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--azul-400);
+    }
+
+    .int-chip.ok {
+      color: var(--vermelho-texto);
+      border-color: var(--vermelho-100);
+      background: var(--vermelho-50);
+    }
+
+    /* ================================================================
+   EYEBROW / SECTION LABEL
+   ================================================================ */
+    .eyebrow {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--vermelho-texto);
+      margin-bottom: var(--sp-2);
+    }
+
+    /* ================================================================
+   CANDIDATE CARD
+   ================================================================ */
+    .candidate-card {
+      background: var(--bg-elev);
+      border: 1px solid var(--borda);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .candidate-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      padding: var(--sp-5) var(--sp-6);
+      border-bottom: 1px solid var(--borda);
+      background: var(--azul-50);
+    }
+
+    .candidate-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.015em;
+      color: var(--azul-500);
+      margin-bottom: 2px;
+    }
+
+    .candidate-meta {
+      font-size: 14px;
+      color: var(--texto-mute);
+    }
+
+    .candidate-stage {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: var(--sp-2);
+      padding: 5px 12px;
+      background: var(--vermelho-50);
+      border: 1px solid var(--vermelho-100);
+      border-radius: var(--r-sm);
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--vermelho-texto);
+    }
+
+    .score-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .score-num {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 32px;
+      letter-spacing: -0.03em;
+      color: var(--azul-500);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--texto-faint);
+    }
+
+    /* ================================================================
+   AI SUGGESTION BOX
+   ================================================================ */
+    .ai-box {
+      margin: var(--sp-5) var(--sp-6) 0;
+      background: var(--azul-50);
+      border: 1px solid var(--azul-100);
+      border-left: 4px solid var(--azul-500);
+      border-radius: var(--r-md);
+      padding: var(--sp-4) var(--sp-5);
+    }
+
+    .ai-box-title {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--azul-400);
+      margin-bottom: var(--sp-2);
+    }
+
+    .ai-box-body {
+      font-size: 14px;
+      color: var(--texto-mute);
+      line-height: 1.6;
+    }
+
+    .ai-box-body strong {
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    /* ================================================================
+   PANELS GRID
+   ================================================================ */
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-5);
+      padding: var(--sp-5) var(--sp-6);
+    }
+
+    @media (max-width: 860px) {
+      .panels {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-title {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--texto-faint);
+      margin-bottom: var(--sp-3);
+      padding-bottom: var(--sp-2);
+      border-bottom: 1px solid var(--borda);
+    }
+
+    /* Interviewers */
+    .interviewer {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      border: 1px solid var(--borda);
+      border-radius: var(--r-lg);
+      margin-bottom: var(--sp-2);
+      transition: border-color 0.15s;
+      background: var(--bg-elev);
+    }
+
+    .interviewer:last-child {
+      margin-bottom: 0;
+    }
+
+    .interviewer.selected {
+      border-color: var(--azul-200);
+      background: var(--azul-50);
+    }
+
+    .interviewer.disabled {
+      opacity: 0.42;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .av-a {
+      background: var(--azul-500);
+    }
+
+    .av-b {
+      background: var(--azul-300);
+    }
+
+    .av-c {
+      background: var(--azul-200);
+      color: var(--azul-700);
+    }
+
+    .av-d {
+      background: var(--azul-100);
+      color: var(--azul-600);
+    }
+
+    .iv-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .iv-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--texto);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .iv-role {
+      font-size: 12px;
+      color: var(--texto-mute);
+      margin-top: 1px;
+    }
+
+    .iv-reason {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      color: var(--texto-faint);
+      margin-top: 2px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-tech);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: var(--r-sm);
+    }
+
+    .tag-azul {
+      background: var(--azul-500);
+      color: white;
+    }
+
+    .tag-outline {
+      background: transparent;
+      border: 1px solid var(--borda-forte);
+      color: var(--texto-mute);
+    }
+
+    .tag-plus {
+      background: var(--vermelho-50);
+      border: 1px solid var(--vermelho-100);
+      color: var(--vermelho-texto);
+    }
+
+    /* Calendar slots */
+    .slot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      border: 1px solid var(--borda);
+      border-radius: var(--r-lg);
+      margin-bottom: var(--sp-2);
+      background: var(--bg-elev);
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .slot:last-child {
+      margin-bottom: 0;
+    }
+
+    .slot:hover:not(.slot-disabled) {
+      border-color: var(--azul-200);
+      background: var(--azul-50);
+    }
+
+    .slot-disabled {
+      opacity: 0.38;
+    }
+
+    .slot-date {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--texto);
+      margin-bottom: 2px;
+    }
+
+    .slot-ok {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #16a34a;
+    }
+
+    .slot-err {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--vermelho-texto);
+    }
+
+    .slot-discarded {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--texto-faint);
+    }
+
+    .btn-slot {
+      padding: 7px 16px;
+      background: var(--azul-500);
+      color: white;
+      border-radius: var(--r-md);
+      font-family: var(--font-tech);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-slot:hover {
+      background: var(--azul-600);
+    }
+
+    /* ================================================================
+   EMAIL PREVIEW
+   ================================================================ */
+    .email-preview {
+      margin: 0 var(--sp-6);
+      background: var(--bg-section);
+      border: 1px solid var(--borda);
+      border-left: 4px solid var(--vermelho-500);
+      border-radius: var(--r-md);
+      padding: var(--sp-4) var(--sp-5);
+    }
+
+    .email-preview-title {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--vermelho-texto);
+      margin-bottom: var(--sp-3);
+    }
+
+    .email-field {
+      display: flex;
+      gap: var(--sp-2);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .email-field-label {
+      font-family: var(--font-tech);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--texto-faint);
+      width: 64px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    .email-field-value {
+      font-size: 13px;
+      color: var(--texto);
+    }
+
+    .email-body-preview {
+      margin-top: var(--sp-3);
+      padding-top: var(--sp-3);
+      border-top: 1px solid var(--borda);
+      font-size: 13px;
+      color: var(--texto-mute);
+      line-height: 1.65;
+      font-style: italic;
+    }
+
+    .email-body-preview em {
+      font-style: normal;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    /* ================================================================
+   ACTIONS
+   ================================================================ */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-5) var(--sp-6);
+      border-top: 1px solid var(--borda);
+      background: var(--bg-section);
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 11px 22px;
+      border-radius: var(--r-md);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--azul-500);
+      color: white;
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    .btn-primary:hover {
+      background: var(--azul-600);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elev);
+      color: var(--texto);
+      border: 1px solid var(--borda-forte);
+    }
+
+    .btn-secondary:hover {
+      background: var(--azul-50);
+      border-color: var(--azul-200);
+    }
+
+    /* ================================================================
+   FOOTER
+   ================================================================ */
+    .footer {
+      background: var(--azul-700);
+      border-top: 3px solid var(--vermelho-500);
+      padding: var(--sp-5) 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-2);
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 18px;
+      color: white;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-brand-sub {
+      font-family: var(--font-tech);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-note {
+      font-family: var(--font-tech);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.4);
+      text-align: right;
+    }
+  </style>
+</head>
+
+<body class="page">
+
+  <!-- ============================================================
+     HEADER
+     ============================================================ -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-mark">🤖</div>
+          <div>
+            <div class="brand-name">CominAI</div>
+            <div class="brand-sub">Agendamento automático de entrevistas</div>
+          </div>
+        </div>
+        <div class="agent-badge">
+          <span class="live-dot"></span>
+          Agente 2 — em ação
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+     MAIN
+     ============================================================ -->
+  <main class="main">
+    <div class="container">
+
+      <!-- Dispatch banner -->
+      <div class="dispatch-banner">
+        <div class="dispatch-left">
+          <span class="dispatch-dot"></span>
+          <span class="dispatch-text">
+            <strong>Disparo automático:</strong> candidato movido para "Prova aprovada" no Quickin há 12 segundos
+          </span>
+        </div>
+        <div class="integrations">
+          <span class="int-chip ok">Quickin ✓</span>
+          <span class="int-chip ok">Coderbyte ✓</span>
+          <span class="int-chip ok">Calendar ✓</span>
+        </div>
+      </div>
+
+      <!-- Eyebrow -->
+      <div class="eyebrow" style="margin-bottom: var(--sp-3);">Candidato em processamento</div>
+
+      <!-- Candidate card -->
+      <div class="candidate-card">
+
+        <!-- Candidate header -->
+        <div class="candidate-header">
+          <div>
+            <div class="candidate-name">Mariana Silva</div>
+            <div class="candidate-meta">Engenheira de Dados Pleno · mariana.silva@email.com</div>
+            <div class="candidate-stage">Prova Coderbyte aprovada — 87/100</div>
+          </div>
+          <div class="score-badge">
+            <span class="score-num">92</span>
+            <span class="score-label">Score triagem</span>
+          </div>
+        </div>
+
+        <!-- AI suggestion box -->
+        <div class="ai-box">
+          <div class="ai-box-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0">
+              <path d="M7 1L8.5 5.5H13L9.5 8L10.8 12.5L7 10L3.2 12.5L4.5 8L1 5.5H5.5L7 1Z" fill="#E63548" />
+            </svg>
+            Sugestão do Agente 2
+          </div>
+          <div class="ai-box-body">
+            Esta vaga é <strong>Engenheira de Dados Pleno</strong>. A política da R2 pede dupla com <strong>1 degrau
+              acima</strong> (sênior ou tech lead) e ao menos uma mulher no painel. Filtrei 8 entrevistadores elegíveis
+            com base no Quickin + Slack #recrutamento; sugiro a dupla abaixo com carga balanceada nas últimas 2 semanas.
+          </div>
+        </div>
+
+        <!-- Two panels -->
+        <div class="panels">
+
+          <!-- Panel: Interviewers -->
+          <div>
+            <div class="panel-title">👥 Dupla sugerida — clique para alterar</div>
+
+            <div class="interviewer selected">
+              <div class="avatar av-a">CB</div>
+              <div class="iv-info">
+                <div class="iv-name">
+                  Camila Borges
+                  <span class="tag tag-azul">Tech Lead</span>
+                  <span class="tag tag-plus">+1 nível</span>
+                </div>
+                <div class="iv-role">Plataforma de Dados</div>
+                <div class="iv-reason">3 entrevistas nos últimos 14 dias · dentro do limite</div>
+              </div>
+            </div>
+
+            <div class="interviewer selected">
+              <div class="avatar av-b">DR</div>
+              <div class="iv-info">
+                <div class="iv-name">
+                  Diego Ramos
+                  <span class="tag tag-outline">Pleno</span>
+                </div>
+                <div class="iv-role">Engenheiro de Dados Pleno</div>
+                <div class="iv-reason">5 entrevistas nos últimos 14 dias · ainda OK</div>
+              </div>
+            </div>
+
+            <div class="interviewer disabled">
+              <div class="avatar av-c">FA</div>
+              <div class="iv-info">
+                <div class="iv-name">
+                  Felipe Andrade
+                  <span class="tag tag-outline">Pleno</span>
+                </div>
+                <div class="iv-role">Engenheiro de Dados Pleno</div>
+                <div class="iv-reason">7 entrevistas — sobrecarregado, descartado</div>
+              </div>
+            </div>
+
+            <div class="interviewer disabled">
+              <div class="avatar av-d">JT</div>
+              <div class="iv-info">
+                <div class="iv-name">
+                  Júlia Tavares
+                  <span class="tag tag-azul" style="background:var(--azul-300)">Sênior</span>
+                </div>
+                <div class="iv-role">Engenheira de Dados Sênior</div>
+                <div class="iv-reason">Em viagem esta semana, descartada</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Calendar slots -->
+          <div>
+            <div class="panel-title">📅 3 slots propostos via Google Calendar</div>
+
+            <div class="slot">
+              <div>
+                <div class="slot-date">Qui, 14/05 · 14h00 – 15h00</div>
+                <div class="slot-ok">✓ Camila e Diego livres · sala híbrida disponível</div>
+              </div>
+              <button class="btn-slot">Propor</button>
+            </div>
+
+            <div class="slot">
+              <div>
+                <div class="slot-date">Sex, 15/05 · 10h30 – 11h30</div>
+                <div class="slot-ok">✓ Camila e Diego livres</div>
+              </div>
+              <button class="btn-slot">Propor</button>
+            </div>
+
+            <div class="slot">
+              <div>
+                <div class="slot-date">Seg, 18/05 · 09h00 – 10h00</div>
+                <div class="slot-ok">✓ Primeiro slot do dia · cabeça fresca</div>
+              </div>
+              <button class="btn-slot">Propor</button>
+            </div>
+
+            <div class="slot slot-disabled">
+              <div>
+                <div class="slot-date">Qua, 13/05 · 15h00 – 16h00</div>
+                <div class="slot-err">✗ Camila com reunião sobreposta</div>
+              </div>
+              <span class="slot-discarded">Descartado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email preview -->
+        <div class="email-preview">
+          <div class="email-preview-title">💌 Prévia do e-mail — enviado via Quickin</div>
+          <div class="email-field">
+            <span class="email-field-label">Assunto</span>
+            <span class="email-field-value">🎉 Vamos marcar sua entrevista — R2 Ventures</span>
+          </div>
+          <div class="email-field">
+            <span class="email-field-label">Para</span>
+            <span class="email-field-value">Mariana Silva &lt;mariana.silva@email.com&gt;</span>
+          </div>
+          <div class="email-body-preview">
+            Oi Mariana, parabéns por avançar no processo! Sua prova técnica ficou excelente (<em>87/100</em>). O próximo
+            passo é uma entrevista técnica de 1h com a <em>Camila Borges</em> (Tech Lead) e o <em>Diego Ramos</em> (Eng.
+            Pleno). Te proponho 3 horários — clica no que encaixar melhor na sua agenda…
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button class="btn btn-secondary">Editar dupla</button>
+          <button class="btn btn-secondary">Editar e-mail</button>
+          <button class="btn btn-primary">Propor os 3 slots ao candidato →</button>
+        </div>
+
+      </div><!-- /candidate-card -->
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="footer-brand-name">R2 ventures</span>
+          <span class="footer-brand-sub">· CominAI</span>
+        </div>
+        <div class="footer-note">
+          Tudo que acontece aqui é gravado como nota interna no Quickin.<br>
+          O recrutador sempre tem a palavra final.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

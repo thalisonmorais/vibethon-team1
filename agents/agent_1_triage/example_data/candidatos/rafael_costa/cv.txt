@@ -1,0 +1,45 @@
+RAFAEL COSTA
+Analista de Dados | Rio de Janeiro, RJ
+rafael.costa@email.com | (21) 99876-5432
+linkedin.com/in/rafa-costa-dados
+
+═══════════════════════════════════════════
+RESUMO
+
+Profissional com 3 anos de experiência em análise e tratamento de dados,
+buscando transição para engenharia de dados. Forte em SQL, Python para
+análise e iniciante em Spark.
+
+═══════════════════════════════════════════
+EXPERIÊNCIA
+
+Itaú Unibanco — Analista de Dados Pleno (Jan/2023 — atual)
+• Construção de dashboards em Power BI para o time de risco de crédito.
+• Queries SQL complexas em ambiente Teradata e Snowflake.
+• Suporte a modelagem de dados em projetos do Data Warehouse.
+• Apoio em ingestão de novos datasets via ferramenta interna (NiFi).
+
+Itaú Unibanco — Analista de Dados Júnior (Mai/2022 — Dez/2022)
+• Atendimento de demandas ad-hoc de áreas de negócio.
+• Manutenção de relatórios em SAS.
+
+Estágio TI — Banco do Brasil (Jul/2021 — Abr/2022)
+• Suporte a usuários, scripts VBA em Excel.
+
+═══════════════════════════════════════════
+FORMAÇÃO
+
+UFRJ — Engenharia de Produção (2017 — 2022)
+
+═══════════════════════════════════════════
+CURSOS
+
+• Curso completo de PySpark (Udemy, 2024) — em andamento
+• SQL Avançado (Alura, 2023)
+• Power BI (Microsoft, 2023)
+
+═══════════════════════════════════════════
+HABILIDADES
+
+SQL (avançado), Python (intermediário — Pandas), Power BI (avançado),
+Excel avançado, SAS (básico), Spark (iniciante, estudando)

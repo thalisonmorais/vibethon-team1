@@ -1,0 +1,307 @@
+{
+  "name": "CominAI — Agendamento (Provas aprovadas → Agente 2 → Quickin + Calendar)",
+  "description": "Disparado pelo Quickin quando um candidato é movido para a etapa 'aprovado na prova'. O Agente 2 identifica entrevistadores elegíveis, checa agendas no Google Calendar, sugere 3 slots e envia ao candidato via Quickin. Suporta os 3 tipos de prova: Coderbyte (Tech), PDF de case via Quickin (Design), Fábrica de Provas (Business).",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quickin-prova-aprovada",
+        "responseMode": "responseNode"
+      },
+      "id": "wf2_webhook",
+      "name": "Webhook Quickin — Prova Aprovada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "notes": "Trigger: candidato movido para etapa 'prova_aprovada' no Quickin. Payload inclui candidato_id, vaga_id, tipo_prova (tech|design|business), nota_prova."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.tipo_prova }}",
+                    "operation": "equals",
+                    "value2": "tech"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Coderbyte"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.tipo_prova }}",
+                    "operation": "equals",
+                    "value2": "design"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Quickin PDF"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.tipo_prova }}",
+                    "operation": "equals",
+                    "value2": "business"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Fabrica de Provas"
+            }
+          ]
+        }
+      },
+      "id": "wf2_switch",
+      "name": "Switch — Tipo da prova",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.coderbyte.com/v1/assessments/{{ $json.coderbyte_assessment_id }}/result",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "wf2_coderbyte",
+      "name": "Coderbyte — Pega resultado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        660,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.quickin.com.br/v1/candidatos/{{ $('Webhook Quickin — Prova Aprovada').item.json.candidato_id }}/anexos?tipo=case_design",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "wf2_quickin_pdf",
+      "name": "Quickin — Pega PDF do case (Design)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.fabricadeprovas.com.br/v1/resultados/{{ $json.fabrica_assessment_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "wf2_fabrica",
+      "name": "Fábrica de Provas — Pega resultado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        660,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "command": "=cd /opt/cominato-copilot/agents/agent_2_scheduler && python schedule.py --candidato-id {{ $('Webhook Quickin — Prova Aprovada').item.json.candidato_id }} --vaga-id {{ $('Webhook Quickin — Prova Aprovada').item.json.vaga_id }} --tipo-prova {{ $('Webhook Quickin — Prova Aprovada').item.json.tipo_prova }}"
+      },
+      "id": "wf2_agente2",
+      "name": "📅 Agente 2 — Define duplas + checa agendas",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        900,
+        300
+      ],
+      "notes": "Em desenvolvimento. Recebe dados do candidato, vaga e prova. Filtra entrevistadores elegíveis (1 degrau acima de senioridade, política de diversidade), consulta Google Calendar, devolve 3 propostas de horário com duplas."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/calendar/v3/freeBusy",
+        "authentication": "oAuth2",
+        "sendBody": true,
+        "jsonBody": "={ \"timeMin\": \"{{ $now.toISO() }}\", \"timeMax\": \"{{ $now.plus({days: 5}).toISO() }}\", \"items\": {{ JSON.stringify($json.entrevistadores_emails.map(e => ({id: e}))) }} }"
+      },
+      "id": "wf2_calendar",
+      "name": "Google Calendar — FreeBusy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1140,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.quickin.com.br/v1/candidatos/{{ $('Webhook Quickin — Prova Aprovada').item.json.candidato_id }}/email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "convite_entrevista"
+            },
+            {
+              "name": "variaveis",
+              "value": "={{ JSON.stringify({ slots_propostos: $json.slots_propostos, link_agendamento: 'https://quickin.com.br/agendar/' + $('Webhook Quickin — Prova Aprovada').item.json.candidato_id }) }}"
+            }
+          ]
+        }
+      },
+      "id": "wf2_email_candidato",
+      "name": "Quickin — Envia convite ao candidato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1380,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\"}"
+      },
+      "id": "wf2_response",
+      "name": "Responde Quickin (200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Quickin — Prova Aprovada": {
+      "main": [
+        [
+          {
+            "node": "Switch — Tipo da prova",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch — Tipo da prova": {
+      "main": [
+        [
+          {
+            "node": "Coderbyte — Pega resultado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Quickin — Pega PDF do case (Design)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fábrica de Provas — Pega resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coderbyte — Pega resultado": {
+      "main": [
+        [
+          {
+            "node": "📅 Agente 2 — Define duplas + checa agendas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quickin — Pega PDF do case (Design)": {
+      "main": [
+        [
+          {
+            "node": "📅 Agente 2 — Define duplas + checa agendas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fábrica de Provas — Pega resultado": {
+      "main": [
+        [
+          {
+            "node": "📅 Agente 2 — Define duplas + checa agendas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📅 Agente 2 — Define duplas + checa agendas": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar — FreeBusy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar — FreeBusy": {
+      "main": [
+        [
+          {
+            "node": "Quickin — Envia convite ao candidato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quickin — Envia convite ao candidato": {
+      "main": [
+        [
+          {
+            "node": "Responde Quickin (200)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cominato-copilot-v0.1"
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "candidato": "mariana_silva",
+    "score": 92,
+    "recomendacao": "avancar_para_prova",
+    "resumo": "Engenheira de dados pleno com 3+ anos de experiência consistente em produção (iFood, QuintoAndar), projeto open-source relevante e certificações alinhadas à stack da vaga.",
+    "pontos_fortes": [
+      "Experiência hands-on com PySpark + Databricks em escala (~2B eventos/dia no iFood) — exatamente a stack da R2.",
+      "Modelagem medallion em Delta Lake comprovada com resultado de negócio (40% redução em tempo de execução).",
+      "Projeto open-source 'delta-cost-watch' (180 stars) já usado em produção na R2-XPTO — sinal forte de execução real.",
+      "Certificação Databricks DE Associate (2024) + USP BCC — fundamentos sólidos.",
+      "Mentora de juniores no time atual — soft skill alinhada à cultura de aprendizado da R2."
+    ],
+    "gaps": [
+      "Não há menção a dbt — desejável na vaga, mas não bloqueante.",
+      "Sem experiência declarada com dados de mídia (impressões, GRP) — domínio específico da R2."
+    ],
+    "sinais_linkedin": {
+      "consistencia_carreira": "Trajetória limpa e crescente: estágio Stone → júnior QuintoAndar → pleno iFood. Tempos de casa coerentes (≥ 1 ano em cada).",
+      "projetos_proprios": "delta-cost-watch (180 stars, em produção). Co-organizadora do meetup Mulheres em Dados SP.",
+      "formacao": "USP — Bacharelado em Ciência da Computação. TCC sobre Z-Ordering em Delta (nota 9,5).",
+      "recomendacoes_endossos": "3 recomendações visíveis, incluindo do tech lead atual destacando autonomia e resolução de problema de skew."
+    },
+    "alertas": [],
+    "pontos_a_investigar_na_entrevista": [
+      "O delta-cost-watch já roda em produção na R2-XPTO — entender como foi a implementação e o que aprendeu mantendo em produção.",
+      "No iFood reduziu 40% do tempo de jobs Gold — pedir para explicar as 2 ou 3 alavancas principais usadas.",
+      "Sem experiência declarada com dbt, mas o fluxo medallion dela é similar — testar como ela planejaria uma migração de 90 dias.",
+      "Validar se há interesse genuíno no domínio de mídia (ela curte posts da R2 sobre AquiAds no LinkedIn) — perguntar o que ela já entende do problema."
+    ],
+    "justificativa_score": "Score 92 reflete match raro: stack idêntica em escala equivalente, evidências concretas de impacto (não promessas), e sinais externos consistentes (open-source, meetup, recomendações). Os gaps são leves e cobertos por aprendizado em ~1 sprint. Acima da nota de corte (70) — Coderbyte enviado automaticamente."
+  },
+  {
+    "candidato": "rafael_costa",
+    "score": 48,
+    "recomendacao": "talent_pool",
+    "resumo": "Analista de dados pleno no Itaú, com forte SQL e Power BI, mas com experiência de engenharia de dados de produção ainda incipiente (Spark apenas em curso, sem entregas).",
+    "pontos_fortes": [
+      "SQL avançado em ambiente Teradata + Snowflake — domínio relevante para a parte de modelagem.",
+      "3 anos em ambiente regulado (banco), o que sinaliza disciplina e cuidado com dados sensíveis.",
+      "Background em Engenharia de Produção pode trazer visão de processos para o time."
+    ],
+    "gaps": [
+      "Sem experiência hands-on com Spark em produção — apenas curso da Udemy em andamento.",
+      "Sem experiência com Databricks (requisito obrigatório da vaga).",
+      "Sem experiência com modelagem medallion (Bronze/Silver/Gold).",
+      "Sem projetos próprios, contribuições open-source ou pegada técnica visível fora do trabalho.",
+      "Sem menção a Python avançado — apenas Pandas em análise."
+    ],
+    "sinais_linkedin": {
+      "consistencia_carreira": "Trajetória linear no Itaú, sem saltos. Estágio BB → Itaú Jr → Itaú Pleno — tempos coerentes.",
+      "projetos_proprios": "Não identificado.",
+      "formacao": "UFRJ — Engenharia de Produção. Sem certificações de engenharia de dados.",
+      "recomendacoes_endossos": "Sem recomendações públicas. 380 conexões."
+    },
+    "alertas": [
+      "Headline do LinkedIn e CV declaram 'Analista de Dados' — não 'Engenheiro de Dados'. A transição é declarada como objetivo, mas ainda não foi concretizada com entregas relevantes."
+    ],
+    "pontos_a_investigar_na_entrevista": [
+      "(Caso futuramente avance) Investigar projetos pessoais em Spark, mesmo que pequenos.",
+      "(Caso futuramente avance) Como ele otimizou queries SQL complexas no Itaú — peça exemplo concreto."
+    ],
+    "justificativa_score": "Score 48 indica candidato razoável, mas com gap relevante de hands-on em Spark/Databricks — requisitos obrigatórios da vaga. Abaixo da nota de corte (70). Talent Pool: pode encaixar em vaga de Analista Engenheiro de Dados ou voltar daqui 6-12 meses com projetos próprios."
+  }
+]

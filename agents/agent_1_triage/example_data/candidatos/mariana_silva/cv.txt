@@ -1,0 +1,58 @@
+MARIANA SILVA
+Engenheira de Dados | São Paulo, SP
+mariana.silva@email.com | (11) 98765-4321
+linkedin.com/in/marianasilva-de | github.com/marisilva-de
+
+═══════════════════════════════════════════
+EXPERIÊNCIA PROFISSIONAL
+
+iFood — Engenheira de Dados Pleno (Jul/2023 — atual)
+• Construção de pipelines em PySpark + Databricks processando ~2B eventos/dia
+  de telemetria de pedidos.
+• Implementação da camada Gold para o time de Precificação (modelo medallion
+  em Delta Lake) — redução de 40% no tempo de execução dos jobs críticos.
+• Migração de DAGs do Airflow on-prem para o Databricks Workflows.
+• Mentora de 2 estagiárias de engenharia de dados.
+
+QuintoAndar — Engenheira de Dados Júnior (Mar/2022 — Jun/2023)
+• Pipelines de ingestão (Kafka → Spark Streaming → S3) para eventos de busca
+  e contratos.
+• Modelagem dimensional star schema do data mart de transações.
+• Code review em PRs do squad e padronização de testes com pytest + Great Expectations.
+
+Stone — Estagiária em Dados (Ago/2021 — Fev/2022)
+• Apoio em dashboards Tableau para o time comercial.
+• Scripts Python para ETL de relatórios contábeis.
+
+═══════════════════════════════════════════
+FORMAÇÃO
+
+USP — Bacharelado em Ciência da Computação (2018 — 2022)
+TCC: "Otimização de joins em data lakes Delta com Z-Ordering" (nota 9,5).
+
+═══════════════════════════════════════════
+CERTIFICAÇÕES
+
+• Databricks Certified Data Engineer Associate (2024)
+• AWS Certified Solutions Architect Associate (2023)
+
+═══════════════════════════════════════════
+HABILIDADES
+
+Linguagens: Python (avançado), SQL (avançado), Scala (básico)
+Big Data: Spark, PySpark, Delta Lake, Kafka, Databricks
+Orquestração: Airflow, Databricks Workflows
+Cloud: AWS (S3, Glue, EMR, Lambda)
+Versionamento: Git, GitHub Actions
+
+═══════════════════════════════════════════
+IDIOMAS
+
+Português (nativo), Inglês (avançado — leitura/escrita técnica fluente)
+
+═══════════════════════════════════════════
+PROJETOS PESSOAIS
+
+• "delta-cost-watch" (GitHub, 180 stars): biblioteca open-source que monitora
+  custo de jobs Databricks e sugere otimizações. Usada em produção pela R2-XPTO.
+• Co-organizadora do meetup "Mulheres em Dados SP" (2023 — atual).

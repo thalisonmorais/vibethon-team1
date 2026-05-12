@@ -1,0 +1,35 @@
+PERFIL LINKEDIN — Mariana Silva
+URL: https://linkedin.com/in/marianasilva-de
+
+HEADLINE: Data Engineer @ iFood | PySpark, Databricks, Delta Lake | Open-source
+
+SOBRE
+Engenheira de dados apaixonada por construir pipelines simples, baratos e
+confiáveis. Trabalho com dados de produção há ~4 anos. Mantenho o
+delta-cost-watch e ajudo a organizar o meetup Mulheres em Dados SP.
+
+EXPERIÊNCIA
+• Data Engineer Pleno @ iFood (Jul/2023 — atual) — 2 anos 10 meses
+• Data Engineer Jr @ QuintoAndar (Mar/2022 — Jun/2023) — 1 ano 3 meses
+• Data Intern @ Stone (Ago/2021 — Fev/2022) — 7 meses
+
+FORMAÇÃO
+USP — BCC (2018-2022)
+
+CERTIFICAÇÕES (visíveis no perfil)
+• Databricks Certified Data Engineer Associate
+• AWS Solutions Architect Associate
+
+ATIVIDADE RECENTE
+• Postou sobre Z-Ordering em Delta há 3 semanas (240 reações).
+• Compartilhou vaga interna iFood há 1 mês.
+• Curtiu posts da R2 Ventures sobre AquiAds.
+
+RECOMENDAÇÕES (3 visíveis)
+• Tech lead do iFood: "Mariana levanta perguntas que ninguém pensou.
+  Resolveu sozinha um problema de skew que arrastava o time há meses."
+• Eng. sênior QuintoAndar: "Júnior atípica — código limpo, testes e
+  documentação desde o primeiro PR."
+• Estagiária mentorada: "Aprendi mais em 6 meses com a Mari do que em 1 ano de curso."
+
+CONEXÕES: 1.200+
